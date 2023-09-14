@@ -26,5 +26,6 @@ Route::resource('products', ProductController::class, ['only' => ['index', 'show
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::resource('products', ProductController::class, ['except' => ['index', 'show']]);
+    Route::post('orders', [OrderController::class,'store'])->name('orders.store');
 });
 
