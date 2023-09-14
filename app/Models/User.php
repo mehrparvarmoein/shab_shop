@@ -44,4 +44,34 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password'          => 'hashed',
     ];
+
+
+    /**
+     *          Query Scopes
+     */
+    public function scopeAdmin($query)
+    {
+        return $query->WhereHas('roles', function ($q) {
+            $q->where('name', 'admin');
+        });
+    }
+
+
+    /**
+     *          Relations
+     */
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
 }
