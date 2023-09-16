@@ -41,6 +41,9 @@ class InstallCommand extends Command
     public function handle()
     {
 
+        Artisan::call('key:generate');
+        $this->info("Application Key generated!");
+
         Artisan::call('migrate --force');
         $this->info("Application Migration in complete!");
 
