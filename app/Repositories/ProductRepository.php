@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Http\Requests\Product\ProductRequest;
 use App\Jobs\ResizeImageJob;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Services\UploadService;
 use Illuminate\Http\Request;
@@ -64,6 +65,9 @@ class ProductRepository
 
     public function deleteProduct(Product $product)
     {
+        if (OrderItem::where('product_id',$product->id)->exists()) {
+            abort(403,__('product.delete_constraint_order'));
+        }
         if ($product->user_id != auth()->id()) {
             abort(403,__('product.delete_unauthorized'));
         }
