@@ -14,7 +14,7 @@ use Tests\TestCase;
 class ProductTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
-    
+
 
     public function test_user_can_get_all_products()
     {
@@ -45,8 +45,8 @@ class ProductTest extends TestCase
     {
         $data = [
             'title'          => $this->faker->name,
-            'price'          => $this->faker->numberBetween(1000,999999999),
-            'shipping_price' => $this->faker->numberBetween(1000,99999),
+            'price'          => $this->faker->numberBetween(1000, 999999999),
+            'shipping_price' => $this->faker->numberBetween(1000, 99999),
         ];
 
         $response = $this->postJson('/api/products', $data);
@@ -59,8 +59,8 @@ class ProductTest extends TestCase
         $user = User::factory()->create();
         $data = [
             'title'          => $this->faker->name,
-            'price'          => $this->faker->numberBetween(1000,999999999),
-            'shipping_price' => $this->faker->numberBetween(1000,99999),
+            'price'          => $this->faker->numberBetween(1000, 999999999),
+            'shipping_price' => $this->faker->numberBetween(1000, 99999),
         ];
 
         $response = $this->actingAs($user)->postJson('/api/products', $data);
@@ -76,19 +76,19 @@ class ProductTest extends TestCase
         $user = User::factory()->create();
         $data = [
             'price'          => 'price',
-            'shipping_price' => $this->faker->numberBetween(1000,99999),
+            'shipping_price' => $this->faker->numberBetween(1000, 99999),
         ];
 
         $response = $this->actingAs($user)->postJson('/api/products', $data);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['title','price']);
+            ->assertJsonValidationErrors(['title', 'price']);
     }
 
 
     public function test_user_can_create_product_with_upload_images()
     {
-        
+
         Queue::fake(); // Fake the job dispatch
         Storage::fake('public'); // Use a fake disk for testing
 
@@ -98,8 +98,8 @@ class ProductTest extends TestCase
 
         $data = [
             'title'          => $this->faker->name,
-            'price'          => $this->faker->numberBetween(1000,999999999),
-            'shipping_price' => $this->faker->numberBetween(1000,99999),
+            'price'          => $this->faker->numberBetween(1000, 999999999),
+            'shipping_price' => $this->faker->numberBetween(1000, 99999),
             'images' => [$image1, $image2],
         ];
 
@@ -113,7 +113,7 @@ class ProductTest extends TestCase
 
         $product = Product::latest()->first();
 
-        storage::disk('public')->assertExists($product->images->offsetGet(0)->path);
+        Storage::disk('public')->assertExists($product->images->offsetGet(0)->path);
         Storage::disk('public')->assertExists($product->images->offsetGet(1)->path);
     }
 
@@ -145,8 +145,8 @@ class ProductTest extends TestCase
 
         $data = [
             'title'          => $this->faker->name,
-            'price'          => $this->faker->numberBetween(1000,999999999),
-            'shipping_price' => $this->faker->numberBetween(1000,99999),
+            'price'          => $this->faker->numberBetween(1000, 999999999),
+            'shipping_price' => $this->faker->numberBetween(1000, 99999),
         ];
 
         $response = $this->actingAs($user)->putJson('/api/products/' . $product->id, $data);
@@ -159,7 +159,7 @@ class ProductTest extends TestCase
 
     public function test_user_cannot_update_product_of_another_user()
     {
-        
+
         $user = User::factory()->create();
         $product = Product::factory()->create([
             'user_id' => $user->id,
@@ -168,8 +168,8 @@ class ProductTest extends TestCase
 
         $data = [
             'title'          => $this->faker->name,
-            'price'          => $this->faker->numberBetween(1000,999999999),
-            'shipping_price' => $this->faker->numberBetween(1000,99999),
+            'price'          => $this->faker->numberBetween(1000, 999999999),
+            'shipping_price' => $this->faker->numberBetween(1000, 99999),
         ];
 
         $response = $this->actingAs($anotherUser)->putJson('/api/products/' . $product->id, $data);

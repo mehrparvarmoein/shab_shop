@@ -15,16 +15,16 @@ class AuthTest extends TestCase
     public function test_user_registration()
     {
         $userData = [
-            'first_name'            => $this->faker->firstName,
-            'last_name'             => $this->faker->lastName,
-            'username'              => $this->faker->userName,
-            'email'                 => $this->faker->unique()->safeEmail,
-            'password'              => 'password',
+            'first_name' => $this->faker->firstName,
+            'last_name'  => $this->faker->lastName,
+            'username'   => $this->faker->userName,
+            'email'      => $this->faker->unique()->safeEmail,
+            'password'   => 'password',
         ];
 
         $response = $this->postJson('/api/register', $userData);
 
-        $response->assertStatus(200)
+        $response->assertOk()
             ->assertJsonStructure([
                 'message',
                 'authorization' => [
@@ -43,7 +43,7 @@ class AuthTest extends TestCase
             ]);
     }
 
-    public function test_user_can_not_registr_with_invalid_data()
+    public function test_user_can_not_register_with_invalid_data()
     {
         $userData = [
             'first_name' => $this->faker->firstName,
@@ -55,7 +55,7 @@ class AuthTest extends TestCase
         $response = $this->postJson('/api/register', $userData);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['email','username']);
+            ->assertJsonValidationErrors(['email', 'username']);
     }
 
     public function test_user_login()
@@ -66,13 +66,12 @@ class AuthTest extends TestCase
 
         $credentials = [
             'username' => $user->username,
-            'password' => 'PASWORD',
+            'password' => 'PASWORD'
         ];
 
         $response = $this->postJson('/api/login', $credentials);
 
-
-        $response->assertStatus(200)
+        $response->assertOk()
             ->assertJsonStructure([
                 'authorization' => [
                     'token',

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\API;
 
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -38,11 +40,11 @@ class OrderTest extends TestCase
             ],
         ];
 
+        $totalPrice = $product1->price * 2 + $product2->price * 3;
+
         $response = $this->actingAs($user)->postJson('/api/orders', [
             'products' => $data,
         ]);
-
-        $totalPrice = 10 * 2 + 15 * 3;
 
         $response->assertOk()
             ->assertJson([
@@ -51,22 +53,22 @@ class OrderTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('orders', [
-            'user_id'     => auth()->id(),
+            'user_id'     => $user->id,
             'total_price' => $totalPrice,
         ]);
 
         $this->assertDatabaseHas('order_items', [
             'product_id'     => $product1->id,
             'quantity'       => 2,
-            'price'          => 10,
-            'shipping_price' => 5,
+            'price'          => $product1->price,
+            'shipping_price' => $product1->shipping_price,
         ]);
 
         $this->assertDatabaseHas('order_items', [
             'product_id'     => $product2->id,
             'quantity'       => 3,
-            'price'          => 15,
-            'shipping_price' => 7,
+            'price'          => $product2->price,
+            'shipping_price' => $product2->shipping_price,
         ]);
     }
 }
